@@ -7,8 +7,127 @@
     <link rel="stylesheet" href="./style.css">
     <title>Vision Health</title>
 </head>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
     //Where functions that can be called go
+    function render_goals(){
+        document.getElementById('Display').innerHTML +=
+        '<div id = "Main_Page" class = "center">'+
+            '<h1> Daily Workout Progress</h1>'+
+            '<div class= "ProgressBar">'+
+                '<div id="progress1">10%</div>'+
+            '</div>'+
+            '<h2 id = "p1"> 10/50 20lb Curl Reps</h2>'+
+
+            '<div class= "ProgressBar">'+
+                '<div id="progress2">10%</div>'+
+            '</div>'+
+            '<h2 id = "p2"> 10/50 30lb Curl Reps</h2>'+
+
+            '<div class= "ProgressBar">'+
+                '<div id="progress3">10%</div>'+
+            '</div>'+
+            '<h2 id = "p3"> 10/50 Lunges</h2>'+
+
+            '<div class= "ProgressBar">'+
+                '<div id="progress4">10%</div>'+
+            '</div>'+
+            '<h2 id = "p4"> 10/30 Minutes of Workout</h2>'+
+       ' </div>'
+        move_progressbar(1)
+        move_progressbar(2)
+        move_progressbar(3)
+        move_progressbar(4)
+
+    }
+    function render_trends(){
+        document.getElementById('Display').innerHTML += 
+        '<div id = "Main_Page" class = "center">' +
+            '<div id="20lbPlot" style="width:90%; padding: 15px;margin: auto;"></div>' +
+            '<div  style="width:45%;"></div>' +
+            '<div id="30lbPlot" style="width:90%; padding: 15px;margin: auto;"></div>' +
+            '<div id="lungesPlot" style="width:90%; padding: 15px;margin: auto;"></div>'+
+            '<div id="timePlot" style="width:90%; padding: 15px;margin: auto;"></div>'+   
+        '</div>';
+        var xArray = [1, 2, 3, 4, 5, 6, 7];
+        //var yArray1 = [5, 20, 30, 42, 15, 69, 74];
+
+        var yArray1 = JSON.parse(localStorage.getItem("curls20lbtrend"));
+        var yArray2 = JSON.parse(localStorage.getItem("curls30lbtrend"));
+        
+        var yArray3 = JSON.parse(localStorage.getItem("lungestrend"));
+        var yArray4 = JSON.parse(localStorage.getItem("timeworkouttrend"));
+
+        // Define Data
+        var data1 = [{x: xArray,y: yArray1, mode:"lines", type:"scatter"}];
+        var data2 = [{x: xArray,y: yArray2, mode:"lines", type:"scatter"}];
+        var data3 = [{x: xArray,y: yArray3, mode:"lines", type:"scatter"}];
+        var data4 = [{x: xArray,y: yArray4, mode:"lines", type:"scatter"}];
+        // Define Layout
+        var layout1 = {xaxis: {range: [0, 7], title: "Last 7 Days"},yaxis: {range: [0, 120], title: "% Goal achieved"},  title: "20lb Curls"};
+        var layout2 = {xaxis: {range: [0, 7], title: "Last 7 Days"},yaxis: {range: [0, 120], title: "% Goal achieved"},  title: "30lb Curls"};
+        var layout3 = {xaxis: {range: [0, 7], title: "Last 7 Days"},yaxis: {range: [0, 120], title: "% Goal achieved"},  title: "Lunges"};
+        var layout4 = {xaxis: {range: [0, 7], title: "Last 7 Days"},yaxis: {range: [0, 120], title: "% Goal achieved"},  title: "Time spent Woking out"};
+        // Display using Plotly
+        Plotly.newPlot("20lbPlot", data1, layout1);
+        Plotly.newPlot("30lbPlot", data2, layout2);
+        Plotly.newPlot("lungesPlot", data3, layout3);
+        Plotly.newPlot("timePlot", data4, layout4);
+
+        
+
+    }
+    function render_edits(){
+        document.getElementById('Display').innerHTML += 
+        '<div id = "Main_Page" class = "center">' +
+            '<form action="/action_page.php" style=" padding: 15px;margin: auto;>'+
+                '<label for="quantity">Daily 20lb Curls:</label>'+
+                '<input type="number" id="quant20lbs" name="quantity" min="1" max="100">'+
+                '<input type="submit" value="Update Goal">'+
+            '</form>'+
+     
+            '<form action="/action_page.php" style=" padding: 15px;margin: auto;>'+
+                '<label for="quantity">Daily 30lb Curls:</label>'+
+                '<input type="number" id="quant30lbs" name="quantity" min="1" max="100">'+
+                '<input type="submit" value="Update Goal">'+
+            '</form>'+
+
+            '<form action="/action_page.php" style=" padding: 15px;margin: auto;>'+
+                '<label for="quantity">Daily Lunges:</label>'+
+                '<input type="number" id="quantLunges" name="quantity" min="1" max="100">'+
+                '<input type="submit" value="Update Goal">'+
+            '</form>'+
+        
+            '<form action="/action_page.php" style=" padding: 15px;margin: auto;>'+
+                '<label for="quantity">Daily Workout Time:</label>'+
+                '<input type="number" id="quantworkouttime" name="quantity" min="1" max="100">'+
+                '<input type="submit" value="Update Goal">'+
+            '</form>'+
+        '</div>';
+
+    }
+    function change_screen(screen_num, remove = true){
+        //Clear whiite border on all buttons
+        document.getElementById("daily_progress").style.border = "0px solid rgb(248, 246, 246)";
+        document.getElementById("weekly_trends").style.border = "0px solid rgb(248, 246, 246)";
+        document.getElementById("edit_goals").style.border = "0px solid rgb(248, 246, 246)";
+        if (remove){
+            document.getElementById("Main_Page").remove();
+        }
+        if (screen_num == 1){
+            document.getElementById("daily_progress").style.border = "8px solid rgb(248, 246, 246)";
+            render_goals()
+        }
+        if (screen_num == 2){
+            document.getElementById("weekly_trends").style.border = "8px solid rgb(248, 246, 246)";
+            render_trends()
+        }
+        if (screen_num == 3){
+            document.getElementById("edit_goals").style.border = "8px solid rgb(248, 246, 246)";
+            render_edits()
+        }
+        
+    }
     function update_progress_bar(barID, percentage){
         var element = document.getElementById(barID);
         var width = percentage;
@@ -26,7 +145,6 @@
         else if(progbar_num == 4){
             document.getElementById("p4").innerHTML = `${complete}/${goal}  Minutes of Workout`
         }
-        
     }
     function move_progressbar(bar_num) {
         var progressbar = document.getElementById(`progress${bar_num}`);   
@@ -72,34 +190,35 @@
 <!--Top Buttons-->
 <body style="background-color:rgb(196, 167, 212);" >
     <div>
-        <button  class="daily_progress" type="button">Daily Progress</button>
-        <button class="weekly_trends" type="button">Trends</button>
-        <button class="edit_goals" type="button">Edit Goals</button>
+        <button  id = "daily_progress" class="daily_progress" type="button" onclick="change_screen(1, true)">Daily Progress</button>
+        <button id = "weekly_trends"  class="weekly_trends" type="button" onclick="change_screen(2, true)">Trends</button>
+        <button id = "edit_goals" class="edit_goals" type="button" onclick="change_screen(3, true)">Edit Goals</button>
     </div>
     <!--Main Page Display-->
-    <div id = "Daily_Goals_Main" class = "center">
-        <h1> Daily Workout Progress</h1>
+    <div id = "Display">
+        <div id = "Main_Page" class = "center">
+            <h1> Daily Workout Progress</h1>
 
-        <div class= "ProgressBar">
-            <div id="progress1">10%</div>
-        </div>
-        <h2 id = "p1"> 10/50 20lb Curl Reps</h2>
+            <div class= "ProgressBar">
+                <div id="progress1">10%</div>
+            </div>
+            <h2 id = "p1"> 10/50 20lb Curl Reps</h2>
 
-        <div class= "ProgressBar">
-            <div id="progress2">10%</div>
-        </div>
-        <h2 id = "p2"> 10/50 30lb Curl Reps</h2>
+            <div class= "ProgressBar">
+                <div id="progress2">10%</div>
+            </div>
+            <h2 id = "p2"> 10/50 30lb Curl Reps</h2>
 
-        <div class= "ProgressBar">
-            <div id="progress3">10%</div>
-        </div>
-        <h2 id = "p3"> 10/50 Lunges</h2>
+            <div class= "ProgressBar">
+                <div id="progress3">10%</div>
+            </div>
+            <h2 id = "p3"> 10/50 Lunges</h2>
 
-        <div class= "ProgressBar">
-            <div id="progress4">10%</div>
+            <div class= "ProgressBar">
+                <div id="progress4">10%</div>
+            </div>
+            <h2 id = "p4"> 10/30 Minutes of Workout</h2>
         </div>
-        <h2 id = "p4"> 10/30 Minutes of Workout</h2>
-        
     </div>  
     <!--Initialization Script--> 
     <script src="./js/health_init.js" type = "module"></script>
