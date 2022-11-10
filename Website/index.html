@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Vision Health</title>
+</head>
+<script>
+    //Where functions that can be called go
+    function update_progress_bar(barID, percentage){
+        var element = document.getElementById(barID);
+        var width = percentage;
+    }
+    function update_goal_text(complete, goal, progbar_num){
+        if (progbar_num == 1){
+            document.getElementById("p1").innerHTML = `${complete}/${goal}  20lb Curl Reps`
+        }
+        else if(progbar_num == 2){
+            document.getElementById("p2").innerHTML = `${complete}/${goal}  30lb Curl Reps`
+        }
+        else if(progbar_num == 3){
+            document.getElementById("p3").innerHTML = `${complete}/${goal}  Lunges`
+        }
+        else if(progbar_num == 4){
+            document.getElementById("p4").innerHTML = `${complete}/${goal}  Minutes of Workout`
+        }
+        
+    }
+    function move_progressbar(bar_num) {
+        var progressbar = document.getElementById(`progress${bar_num}`);   
+        width = 0
+        var goal_name
+        if (bar_num == 1){
+            goal_name = 'curls20lb'
+            console.log("True")
+        }
+        else if (bar_num == 2){
+            goal_name = 'curls30lb'
+        }
+        else if (bar_num == 3){
+            goal_name = 'lunges'
+        }
+        else if (bar_num == 4){
+            goal_name = 'timeworkout'
+        }
+        var goal_data = JSON.parse(localStorage.getItem(goal_name))
+        var goal = goal_data['goal']
+        var complete = goal_data['complete']
+        var goal_percent_hit = Math.round(100*complete/goal)
+        if (goal_percent_hit>=100){
+            goal_percent_hit = 100
+        }
+        var id = setInterval(frame, 10);
+        function frame() {
+            if (width >= goal_percent_hit) {
+            clearInterval(id);
+            } else {
+            width++; 
+            progressbar.style.width = width + '%'; 
+            progressbar.innerHTML = '&nbsp' + width * 1  + '%';
+            }
+        }
+        if (goal_percent_hit == 0) {
+            progressbar.style.width = width + '%'
+            progressbar.innerHTML = '&nbsp' + width * 1  + '%'
+        }
+        update_goal_text(complete, goal, bar_num)
+    }
+</script>
+<!--Top Buttons-->
+<body style="background-color:rgb(196, 167, 212);" >
+    <div>
+        <button  class="daily_progress" type="button">Daily Progress</button>
+        <button class="weekly_trends" type="button">Trends</button>
+        <button class="edit_goals" type="button">Edit Goals</button>
+    </div>
+    <!--Main Page Display-->
+    <div id = "Daily_Goals_Main" class = "center">
+        <h1> Daily Workout Progress</h1>
+
+        <div class= "ProgressBar">
+            <div id="progress1">10%</div>
+        </div>
+        <h2 id = "p1"> 10/50 20lb Curl Reps</h2>
+
+        <div class= "ProgressBar">
+            <div id="progress2">10%</div>
+        </div>
+        <h2 id = "p2"> 10/50 30lb Curl Reps</h2>
+
+        <div class= "ProgressBar">
+            <div id="progress3">10%</div>
+        </div>
+        <h2 id = "p3"> 10/50 Lunges</h2>
+
+        <div class= "ProgressBar">
+            <div id="progress4">10%</div>
+        </div>
+        <h2 id = "p4"> 10/30 Minutes of Workout</h2>
+        
+    </div>  
+    <!--Initialization Script--> 
+    <script src="./js/health_init.js" type = "module"></script>
+    
+</body>
+</html>
