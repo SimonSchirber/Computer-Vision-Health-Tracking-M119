@@ -9,7 +9,7 @@
 </head>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
-    //Where functions that can be called go
+    
     function render_goals(){
         document.getElementById('Display').innerHTML +=
         '<div id = "Main_Page" class = "center">'+
@@ -73,9 +73,6 @@
         Plotly.newPlot("30lbPlot", data2, layout2);
         Plotly.newPlot("lungesPlot", data3, layout3);
         Plotly.newPlot("timePlot", data4, layout4);
-
-        
-
     }
     function render_edits(){
         document.getElementById('Display').innerHTML += 
@@ -104,7 +101,6 @@
                 '<input type="submit" value="Update Goal">'+
             '</form>'+
         '</div>';
-
     }
     function change_screen(screen_num, remove = true){
         //Clear whiite border on all buttons
@@ -186,6 +182,8 @@
         }
         update_goal_text(complete, goal, bar_num)
     }
+   
+
 </script>
 <!--Top Buttons-->
 <body style="background-color:rgb(196, 167, 212);" >

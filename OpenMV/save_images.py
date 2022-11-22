@@ -23,22 +23,22 @@ for file in files:
     if "jpg" in file:
         print(f"removing {file}")
         uos.remove(file)
+object = "two_finger_rotation_test2"
+
+##uos.rmdir("stophand")
+uos.mkdir(object)
+uos.chdir(f"/{object}")
 
 
-#uos.rmdir("stophand")
-uos.mkdir("thumbdown")
-uos.chdir("/thumbdown")
 
-
-
-for i in range(45):
+for i in range(15):
     redLED.on()
     sensor.skip_frames(time = 1000) # Skip some frames to let the image stabilize
-    sensor.snapshot().save(f'thumbdown_{num}.jpg')
+    sensor.snapshot().save(f'{object}_{num}.jpg')
     redLED.off()
-    time.sleep(.5)
+    time.sleep(2)
     num += 1
-    print("picture")
+    print(f"picture {num}")
 
 
 
