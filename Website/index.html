@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Vision Health</title>
 </head>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
 <script>
+    
     
     function render_goals(){
         document.getElementById('Display').innerHTML +=
@@ -148,7 +150,6 @@
         var goal_name
         if (bar_num == 1){
             goal_name = 'curls20lb'
-            console.log("True")
         }
         else if (bar_num == 2){
             goal_name = 'curls30lb'
@@ -182,7 +183,31 @@
         }
         update_goal_text(complete, goal, bar_num)
     }
-   
+    var socket = io();
+    socket.on('data', function(data) {
+        console.log(data);
+        var mydataArray = data.split(", ")
+        //Progress Bar Tab
+        if (document.body.contains(document.getElementById("progress1"))){
+            
+            var curls20lb = JSON.parse(localStorage.getItem("curls20lb"))
+            curls20lb.complete = mydataArray[0]
+            localStorage.setItem('curls20lb', JSON.stringify(curls20lb))
+
+            var curls30lb = JSON.parse(localStorage.getItem("curls30lb"))
+            curls20lb.complete = mydataArray[1]
+            localStorage.setItem('curls30lb', JSON.stringify(curls30lb))
+
+
+            move_progressbar(1)
+        }
+        //Trends Tab
+        else if(document.body.contains(document.getElementById("20lbPlot"))) {
+            console.log("Trends Tab")
+            }
+    });
+        
+        
 
 </script>
 <!--Top Buttons-->

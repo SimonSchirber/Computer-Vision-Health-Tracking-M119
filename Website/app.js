@@ -1,13 +1,26 @@
 var http = require('http');
 var fs = require('fs');
 var index = fs.readFileSync( 'index.html');
-
 var SerialPort = require('serialport');
+
 const parsers = SerialPort.parsers;
 
 const parser = new parsers.Readline({
   delimiter: '\r\n'
 });
+
+const path = require('path');
+var express = require('express');
+var app = express();
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, '/index.html'));
+});
+app.use(express.static(__dirname + '/Public'))
+
+var httpServer = http.createServer(app);
+httpServer.listen(8080);
+
+
 
 var port = new SerialPort('COM6',{ 
   baudRate: 9600,
@@ -19,12 +32,11 @@ var port = new SerialPort('COM6',{
 
 port.pipe(parser);
 
-var app = http.createServer(function(req, res) {
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  res.end(index);
-});
-
-var io = require('socket.io').listen(app);
+// var app = http.createServer(function(req, res) {
+//   res.writeHead(200, {'Content-Type': 'text/html'});
+//   res.end(index);
+// });
+var io = require('socket.io').listen(httpServer);
 io.on('connection', function(socket) {  
   console.log('Node is listening to port');  
 });
@@ -34,4 +46,4 @@ parser.on('data', function(data) {
   io.emit('data', data);
 });
 
-app.listen(6969);
+//app.listen(6969);
