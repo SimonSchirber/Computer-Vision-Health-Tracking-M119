@@ -10,8 +10,7 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
-<script>
-    
+<script>  
     function render_goals(){
         document.getElementById('Display').innerHTML +=
         '<div id = "Main_Page" class = "center">'+
@@ -51,7 +50,7 @@
         move_progressbar(4)
 
     }
-    function render_trends(){
+    function render_trends(updated = 0, val_1 = 0, val_2 = 0, val_4 = 0){
         document.getElementById('Display').innerHTML += 
         '<div id = "Main_Page" class = "center">' +
             '<div id="20lbPlot" style="width:90%; padding: 15px;margin: auto;"></div>' +
@@ -62,12 +61,23 @@
         '</div>';
         var xArray = [1, 2, 3, 4, 5, 6, 7];
         //var yArray1 = [5, 20, 30, 42, 15, 69, 74];
-
         var yArray1 = JSON.parse(localStorage.getItem("curls20lbtrend"));
         var yArray2 = JSON.parse(localStorage.getItem("curls30lbtrend"));
         
         var yArray3 = JSON.parse(localStorage.getItem("lungestrend"));
         var yArray4 = JSON.parse(localStorage.getItem("timeworkouttrend"));
+        if (updated){
+            var goal_data1 = JSON.parse(localStorage.getItem('curls20lb'))
+            var goal1 = goal_data1['goal']
+            console.log(goal1)
+            var goal_data2 = JSON.parse(localStorage.getItem('curls30lb'))
+            var goal2 = goal_data2['goal']
+            var goal_data4 = JSON.parse(localStorage.getItem('timeworkout'))
+            var goal4 = goal_data4['goal']
+            yArray1[yArray1.length - 1] = val_1 * 100/goal1;
+            yArray2[yArray2.length - 1] = val_2;
+            yArray4[yArray4.length - 1] = val_4;
+        }
 
         // Define Data
         var data1 = [{x: xArray,y: yArray1, mode:"lines", type:"scatter"}];
@@ -218,8 +228,7 @@
                 curls20lb.complete = mydataArray[0]
                 localStorage.setItem('curls20lb', JSON.stringify(curls20lb))
                 move_progressbar(1)
-            }
-                
+            }  
             var curls30lb = JSON.parse(localStorage.getItem("curls30lb"))
             var complete = curls30lb['complete']
             if (complete.toString() != mydataArray[1]){
@@ -227,7 +236,6 @@
                 localStorage.setItem('curls30lb', JSON.stringify(curls30lb))
                 move_progressbar(2)
             }
-
             var timeworkout = JSON.parse(localStorage.getItem("timeworkout"))
             var complete = timeworkout['complete']
             if (complete.toString() != mydataArray[2]){
@@ -238,7 +246,23 @@
         }
         //Trends Tab
         else if(document.body.contains(document.getElementById("20lbPlot"))) {
-            
+            var curls20lb = JSON.parse(localStorage.getItem("curls20lb"))
+            var complete1 = curls20lb['complete'].toString()
+            var curls30lb = JSON.parse(localStorage.getItem("curls30lb"))
+            var complete2 = curls30lb['complete'].toString()
+            var timeworkout = JSON.parse(localStorage.getItem("timeworkout"))
+            var complete4 = timeworkout['complete'].toString()
+
+            if (complete1 != mydataArray[0] || complete2 != mydataArray[1] || complete4 != mydataArray[2]){
+                document.getElementById("Main_Page").remove();
+                render_trends(updated = 1, mydataArray[0], mydataArray[1] , mydataArray[2])
+                curls20lb.complete = mydataArray[0]
+                localStorage.setItem('curls20lb', JSON.stringify(curls20lb))
+                curls30lb.complete = mydataArray[1]
+                localStorage.setItem('curls30lb', JSON.stringify(curls30lb))
+                timeworkout.complete = mydataArray[2]
+                localStorage.setItem('timeworkout', JSON.stringify(timeworkout))
+            }
         }
 
         //Define Music call events
@@ -255,9 +279,6 @@
             brief_highlight('Next_Song') 
         }
     });
-
-
-    
     window.onSpotifyWebPlaybackSDKReady = () => {
         const token = 'BQDMddxQGVY-Hdf5kmvQtb1BoyyCRMvph03GXMHpQacOGFGBSXY8kav_4kspi_Ctfg3Kg6Om2Ig3pgeM5n7_5_CI3TpggSwIuQA2Uhi-3xas2IsU-p_DDHgQyTOKGzrGu4AQY4cvcH6YgoOkpo7mOyWXQ_fcvz8WqSyJuzY7qNEdarj5g3QvCEhnzHwvYPekhiDPrio6zo14c_rx-XUB_8HNB28'
         const player = new Spotify.Player({
@@ -302,8 +323,7 @@
         };
 
         player.connect();
-    }
-    
+    } 
 </script>
 
 <!--Top Buttons-->
