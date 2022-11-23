@@ -2,16 +2,28 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta charset="ISO-8859-1">
+    
     <title>My Playback</title>
+    <link rel="stylesheet" href="style.css">
+    
 </head>
 <body>
-    <h1>My Spotify</h1>
-    <button id="togglePlay">Toggle Play</button>
+    <h1>Music Control</h1>
+    <button id="Prev_Song">Prev Song</button>
+    <button id="togglePlay">Play/Pause</button>
+    <button id="Next_Song">Next Song</button>
+    <div>
+        <button class="song_button previous round"> &#8249;</button>
+        <button id = "toggle_button" class="song_button play round"> &#x23EF;&#xFE0E;</button>
+        <button class="song_button next round">&#8250;</button>
+    </div>
 
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script>
         window.onSpotifyWebPlaybackSDKReady = () => {
-            const token = 'BQBHa-Jwlvbo9LQnUUHQVQpr1o3E1ZhO3cXRENmIRbpvvUT--9TkgGpUI7BHffpLsBzl7NuFG9InPWwsMBYlUOR3sySCEODDRyRRUJVRmkIXrSPPheqIzJby3n9JjfuDHeuf4brPB0G8Dby7BVKfnm5f7YbSXws_WgmIdbrPaDkVLAlnmymHUZUpdQf1wchMYjkkF0XPfwE3MuYeP1zirBe9OlM';
+            const token = 'BQBB6pRsQkZCnssnyECp_QTaXkZyI7HFK6A8Jaq7IbXjYMJBOLZgxjZgZY1FJo5QbZrEwCS6ZHh5aRGd6JtOge2LdaFeYKPz8i-kVdAA7KyRvQz11K7sBZIe-9E2BbPT6n-ZkJPIoQi9Awmyfb6RkdmFByeTOEOQGNLsaUBkZRsbdXMibf1qd9gxIiGxjzfXXz6Q3nvBrk4TpRxuwLdENb9hhk4'
             const player = new Spotify.Player({
                 name: 'Vision Health',
                 getOAuthToken: cb => { cb(token); },
@@ -39,9 +51,15 @@
             player.addListener('account_error', ({ message }) => {
                 console.error(message);
             });
-
+            //Buttons
             document.getElementById('togglePlay').onclick = function() {
               player.togglePlay();
+            };
+            document.getElementById('Prev_Song').onclick = function() {
+              player.previousTrack();
+            };
+            document.getElementById('Next_Song').onclick = function() {
+              player.nextTrack();
             };
 
             player.connect();

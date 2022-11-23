@@ -9,32 +9,41 @@
 </head>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
-    
     
     function render_goals(){
         document.getElementById('Display').innerHTML +=
         '<div id = "Main_Page" class = "center">'+
             '<h1> Daily Workout Progress</h1>'+
+            
             '<div class= "ProgressBar">'+
                 '<div id="progress1">10%</div>'+
             '</div>'+
-            '<h2 id = "p1"> 10/50 20lb Curl Reps</h2>'+
+            '<div class = "spacing">'+
+                '<h2 id = "p1"> 10/50 20lb Curl Reps</h2>'+
+            '</div>'+
 
             '<div class= "ProgressBar">'+
                 '<div id="progress2">10%</div>'+
             '</div>'+
-            '<h2 id = "p2"> 10/50 30lb Curl Reps</h2>'+
+            '<div class = "spacing">' +
+                '<h2 id = "p2"> 10/50 30lb Curl Reps</h2>'+
+            '</div>'+
 
             '<div class= "ProgressBar">'+
                 '<div id="progress3">10%</div>'+
             '</div>'+
-            '<h2 id = "p3"> 10/50 Lunges</h2>'+
+            '<div class = "spacing">'+
+                '<h2 id = "p3"> 10/50 Lunges</h2>'+
+            '</div>'+
 
             '<div class= "ProgressBar">'+
                 '<div id="progress4">10%</div>'+
             '</div>'+
-            '<h2 id = "p4"> 10/30 Minutes of Workout</h2>'+
+            '<div class = "spacing">'+
+                '<h2 id = "p4"> 10/30 Minutes of Workout</h2>'+
+            '</div>'+
        ' </div>'
         move_progressbar(1)
         move_progressbar(2)
@@ -169,7 +178,7 @@
         }
         var id = setInterval(frame, 10);
         function frame() {
-            if (width >= goal_percent_hit) {
+            if (width > goal_percent_hit) {
             clearInterval(id);
             } else {
             width++; 
@@ -181,41 +190,137 @@
             progressbar.style.width = width + '%'
             progressbar.innerHTML = '&nbsp' + width * 1  + '%'
         }
+
         update_goal_text(complete, goal, bar_num)
+    }
+    function brief_highlight(theid){
+        item = document.getElementById(theid)
+        item.style.border = "8px solid yellow"
+        //document.getElementById(theid).style.borderRadius = "20em";
+        setTimeout(() => {  item.style.border = "2px solid black" }, 500);
     }
     var socket = io();
     socket.on('data', function(data) {
         console.log(data);
         var mydataArray = data.split(", ")
+        if (mydataArray[3].length == 1){
+            document.getElementById("timer").innerHTML = `${mydataArray[2]}:0${mydataArray[3]}`
+        }
+        else{
+            document.getElementById("timer").innerHTML = `${mydataArray[2]}:${mydataArray[3]}`
+        }
         //Progress Bar Tab
         if (document.body.contains(document.getElementById("progress1"))){
             
             var curls20lb = JSON.parse(localStorage.getItem("curls20lb"))
-            curls20lb.complete = mydataArray[0]
-            localStorage.setItem('curls20lb', JSON.stringify(curls20lb))
-
+            var complete = curls20lb['complete']
+            if (complete.toString() != mydataArray[0]){
+                curls20lb.complete = mydataArray[0]
+                localStorage.setItem('curls20lb', JSON.stringify(curls20lb))
+                move_progressbar(1)
+            }
+                
             var curls30lb = JSON.parse(localStorage.getItem("curls30lb"))
-            curls20lb.complete = mydataArray[1]
-            localStorage.setItem('curls30lb', JSON.stringify(curls30lb))
+            var complete = curls30lb['complete']
+            if (complete.toString() != mydataArray[1]){
+                curls30lb.complete = mydataArray[1]
+                localStorage.setItem('curls30lb', JSON.stringify(curls30lb))
+                move_progressbar(2)
+            }
 
-
-            move_progressbar(1)
+            var timeworkout = JSON.parse(localStorage.getItem("timeworkout"))
+            var complete = timeworkout['complete']
+            if (complete.toString() != mydataArray[2]){
+                timeworkout.complete = mydataArray[2]
+                localStorage.setItem('timeworkout', JSON.stringify(timeworkout))
+                move_progressbar(4)
+            }
         }
         //Trends Tab
         else if(document.body.contains(document.getElementById("20lbPlot"))) {
-            console.log("Trends Tab")
-            }
-    });
-        
-        
+            
+        }
 
+        //Define Music call events
+        if (mydataArray[5] == 1){
+            document.getElementById('Toggle').click()
+            brief_highlight('Toggle')
+        }
+        else if (mydataArray[4] == 1){
+            document.getElementById('Prev_Song').click()
+            brief_highlight('Prev_Song') 
+        }
+        else if (mydataArray[6] == 1){
+            document.getElementById('Next_Song').click()
+            brief_highlight('Next_Song') 
+        }
+    });
+
+
+    
+    window.onSpotifyWebPlaybackSDKReady = () => {
+        const token = 'BQDMddxQGVY-Hdf5kmvQtb1BoyyCRMvph03GXMHpQacOGFGBSXY8kav_4kspi_Ctfg3Kg6Om2Ig3pgeM5n7_5_CI3TpggSwIuQA2Uhi-3xas2IsU-p_DDHgQyTOKGzrGu4AQY4cvcH6YgoOkpo7mOyWXQ_fcvz8WqSyJuzY7qNEdarj5g3QvCEhnzHwvYPekhiDPrio6zo14c_rx-XUB_8HNB28'
+        const player = new Spotify.Player({
+            name: 'Vision Health',
+            getOAuthToken: cb => { cb(token); },
+            volume: 0.5
+        });
+
+        // Ready
+        player.addListener('ready', ({ device_id }) => {
+            console.log('Ready with Device ID', device_id);
+        });
+
+        // Not Ready
+        player.addListener('not_ready', ({ device_id }) => {
+            console.log('Device ID has gone offline', device_id);
+        });
+
+        player.addListener('initialization_error', ({ message }) => {
+            console.error(message);
+        });
+
+        player.addListener('authentication_error', ({ message }) => {
+            console.error(message);
+        });
+
+        player.addListener('account_error', ({ message }) => {
+            console.error(message);
+        });
+        //Buttons
+        document.getElementById('Toggle').onclick = function() {
+            player.togglePlay();
+            console.log("Toggle player Triggered")
+        };
+        document.getElementById('Prev_Song').onclick = function() {
+            player.previousTrack();
+            console.log("Prev Song player Triggered")
+        };
+        document.getElementById('Next_Song').onclick = function() {
+            player.nextTrack();
+            console.log("Next Song player Triggered")
+        };
+
+        player.connect();
+    }
+    
 </script>
+
 <!--Top Buttons-->
 <body style="background-color:rgb(196, 167, 212);" >
-    <div>
+    <div >
         <button  id = "daily_progress" class="daily_progress" type="button" onclick="change_screen(1, true)">Daily Progress</button>
-        <button id = "weekly_trends"  class="weekly_trends" type="button" onclick="change_screen(2, true)">Trends</button>
+        <button id = "weekly_trends"  class="weekly_trends" type="button" onclick="change_screen(2, true)">Weekly Trends</button>
         <button id = "edit_goals" class="edit_goals" type="button" onclick="change_screen(3, true)">Edit Goals</button>
+    </div>
+    <div class = 'center_song_buttons'>
+        <button id = "Prev_Song" class="song_button previous round"> &#8249;</button>
+        <button id = "Toggle" class="song_button toggle round"> &#x23EF;</button>
+        <button id = "Next_Song" class="song_button next round">&#8250;</button>
+    </div>
+        <h5 id = "timer" class = 'center_timer'> 0:00 </h5>
+    <div>
+
     </div>
     <!--Main Page Display-->
     <div id = "Display">
@@ -225,26 +330,62 @@
             <div class= "ProgressBar">
                 <div id="progress1">10%</div>
             </div>
-            <h2 id = "p1"> 10/50 20lb Curl Reps</h2>
+            <div class = "spacing">
+                <h2 id = "p1"> 10/50 20lb Curl Reps</h2>
+            </div>
 
             <div class= "ProgressBar">
                 <div id="progress2">10%</div>
             </div>
-            <h2 id = "p2"> 10/50 30lb Curl Reps</h2>
+            <div class = "spacing">
+                <h2 id = "p2"> 10/50 30lb Curl Reps</h2>
+            </div>
 
             <div class= "ProgressBar">
                 <div id="progress3">10%</div>
             </div>
-            <h2 id = "p3"> 10/50 Lunges</h2>
-
+            <div class = "spacing">
+                <h2 id = "p3"> 10/50 Lunges</h2>
+            </div>
+        
             <div class= "ProgressBar">
                 <div id="progress4">10%</div>
             </div>
-            <h2 id = "p4"> 10/30 Minutes of Workout</h2>
+            <div class = "spacing">
+                <h2 id = "p4"> 10/30 Minutes of Workout</h2>
+            </div>
         </div>
     </div>  
-    <!--Initialization Script--> 
-    <script src="./js/health_init.js" type = "module"></script>
+    <!-- Initialization Script 
+    <script src="js/health_init.js" type = "module"></script> -->
+    <script>
+        var curls20lb = {'complete': 0, 'goal': 10}
+        var curls20lb_trend =  [0, 60, 30, 42, 15, 69, 74]
+        window.localStorage.setItem('curls20lb', JSON.stringify(curls20lb))
+        window.localStorage.setItem('curls20lbtrend', JSON.stringify(curls20lb_trend))
+
+        var curls30lb = {'complete': 00, 'goal': 10}
+        var curls30lb_trend =  [0, 10, 46, 20, 59, 90, 73]
+        localStorage.setItem('curls30lb', JSON.stringify(curls30lb))
+        localStorage.setItem('curls30lbtrend', JSON.stringify(curls30lb_trend))
+
+        var lunges = {'complete': 17, 'goal': 20}
+        var lunges_trend =  [40, 0, 80, 100, 110, 80, 100]
+        localStorage.setItem('lunges', JSON.stringify(lunges))
+        localStorage.setItem('lungestrend', JSON.stringify(lunges_trend))
+
+        var timeworkout = {'complete': 20, 'goal': 5}
+        var timeworkout_trend =  [0, 10, 75, 90, 25, 68, 100]
+        localStorage.setItem('timeworkout', JSON.stringify(timeworkout))
+        localStorage.setItem('timeworkouttrend', JSON.stringify(timeworkout_trend))
+
+
+        change_screen(1,  true)
+        move_progressbar(1)
+        move_progressbar(2)
+        move_progressbar(3)
+        move_progressbar(4)
+    </script>
     
 </body>
 </html>

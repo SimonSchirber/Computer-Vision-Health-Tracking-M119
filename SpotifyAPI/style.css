@@ -1,0 +1,32 @@
+.song_button {
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+  }
+  
+.song_button:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.previous {
+    background-color:  #04AA6D;
+    color: black;
+}
+.play {
+    background-color:  #04AA6D;
+    color: black;
+}
+.pause {
+    background-color:  #04AA6D;
+    color: black;
+}
+  
+.next {
+    background-color: #04AA6D;
+    color: black;
+}
+  
+.round {
+    border-radius: 50%;
+}
