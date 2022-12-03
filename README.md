@@ -12,8 +12,13 @@ Using Nicla Sense microcontroller and computer vision with edge impulse to monit
 
 ## Tasks Left:
 
-* Connect Nicla Sense to Wifi
-* Build Website to publish data
-* build backened to store data for website
-* train neural network on NICLA board
-* control smart device on NICLA/run python script
+* ~~Connect Nicla Sense to Wifi~~
+* ~~Build Website to publish data~~
+* ~~build backened to store data for website~~
+* ~~train neural network on NICLA board~~
+* ~~control smart device on NICLA/run python script~~
+
+
+Project Video Demo Found Here:
+
+- https://drive.google.com/file/d/1-X1QyaqGJkzq7faB3ZMshqubFEYKskSb/view?usp=sharing
